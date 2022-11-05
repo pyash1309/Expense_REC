@@ -150,7 +150,7 @@ if option=="Home":
 
     st.markdown("<h1 style='text-align: center; color: white;'>Expense Record</h1>", unsafe_allow_html=True)
     st.header("Introduction : ")
-    st.markdown("<marquee>This project helps in identifying the daily expenses made by you and helps in maintaing the record for the same.</marquee>", unsafe_allow_html=True)
+    st.markdown("<marquee>This project helps in identifying the daily expenses made by you and helps in maintaing the record for the same. Hello All.</marquee>", unsafe_allow_html=True)
     c1,c2=st.columns((2,1))
     
     with c1:
