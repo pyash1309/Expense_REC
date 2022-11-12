@@ -34,17 +34,17 @@ def Overview():
         csvreader=csv.reader(csvfile,delimiter=',')
         
         for row in csvreader:
-            d.append(float(row[3]))
-            k.append(float(row[4]))
-            y.append(float(row[2]))
+            d.append(float(row[4]))
+            k.append(float(row[5]))
+            y.append(float(row[3]))
         
     with open(filename,'r') as csvfile:
         i=0;
         csvreader=csv.reader(csvfile,delimiter=',')
         for row in csvreader :
-            d[i] = d[i] + float(row[5])/3;
-            k[i] = k[i] + float(row[5])/3;
-            y[i] = y[i] + float(row[5])/3;
+            d[i] = d[i] + float(row[6])/3;
+            k[i] = k[i] + float(row[6])/3;
+            y[i] = y[i] + float(row[6])/3;
             i=i+1
             
     return d,k,y
@@ -55,39 +55,60 @@ def plotter():
     k_g={}
     y_g={}
     
+    month_d={}
+    month_k={}
+    month_y={}
+    
     with open("Hostel Expense Record.csv",'r') as csvfile:
         
         csvreader=csv.reader(csvfile,delimiter=',')
        
         for row in csvreader:
             if row[0] in d_g:
-                d_g[row[0]]+=float(row[3]) + float(row[5])/3
+                d_g[row[0]]+=float(row[4]) + float(row[6])/3
             else:
-                d_g[row[0]]=float(row[3])
+                d_g[row[0]]=float(row[4]) + float(row[6])/3
                 
             if row[0] in k_g:
-                k_g[row[0]]+=float(row[4]) + float(row[5])/3
+                k_g[row[0]]+=float(row[5]) + float(row[6])/3
             else:
-                k_g[row[0]]=float(row[4])
+                k_g[row[0]]=float(row[5]) + float(row[6])/3
                 
             if row[0] in y_g:
-                y_g[row[0]]+=float(row[2]) + float(row[5])/3
+                y_g[row[0]]+=float(row[3]) + float(row[6])/3
             else:
-                y_g[row[0]]=float(row[2])          
+                y_g[row[0]]=float(row[3]) + float(row[6])/3
+                
+            month=row[0][:7]
+            
+            if month in month_d:
+                month_d[month]+=float(row[4]) + float(row[6])/3
+            else:
+                month_d[month]=float(row[4]) + float(row[6])/3
+                
+            if month in month_k:
+                month_k[month]+=float(row[5]) + float(row[6])/3
+            else:
+                month_k[month]=float(row[5]) + float(row[6])/3
+                
+            if month in month_y:
+                month_y[month]+=float(row[3]) + float(row[6])/3
+            else:
+                month_y[month]=float(row[3]) + float(row[6])/3              
     
-    return d_g,y_g,k_g
+    return d_g,y_g,k_g,month_d,month_y,month_k
 
 def graph_wiz(x,grph_type) :
     
     lst_key = list(x.keys())
     lst_val = list(x.values())
     
-    if grph_type == 'daily' :
+    if grph_type == 'daily-7' :
         
         lst_val = lst_val[-8:-1]
         lst_key = lst_key[-8:-1]
        
-    elif grph_type == 'month' :
+    elif grph_type == 'daily-30' :
         
         lst_val = lst_val[-31:-1]
         lst_key = lst_key[-31:-1]
@@ -96,9 +117,14 @@ def graph_wiz(x,grph_type) :
     fig.set_facecolor('#0e1117')
     ax.set_facecolor('#0e1117')
     
-    if grph_type == 'daily' :
+    if grph_type == 'daily-7' :
         ax.plot(lst_key,lst_val, color = 'white', marker = 'o',  markerfacecolor='white', markersize = 6)
         plt.grid(color = '#d8d8d8', linestyle = '-.', linewidth = '0.2')
+        ax.set_xticklabels(lst_key, rotation=45)
+    
+    elif grph_type == 'daily-30' :
+        ax.bar(lst_key,lst_val, color = 'white')
+        plt.grid(axis = 'y', color = '#d8d8d8', linestyle = '-.', linewidth = '0.2')
         ax.set_xticklabels(lst_key, rotation=45)
     
     elif grph_type == 'month' :
@@ -115,23 +141,29 @@ def graph_wiz(x,grph_type) :
     ax.spines['left'].set_color('#0e1117')
     ax.spines['right'].set_color('#0e1117')
     plt.ylabel('Amount (in Rupees)')
-    plt.xlabel('Date')
     st.pyplot(fig)
 
-def update(da,la,e1,e2,e3,e4):
+def update(da,day,la,e1,e2,e3,e4):
     
     filename="Hostel Expense Record.csv"
-    rowlist = [da.strip('\n'),la.strip('\n'),e1,e2,e3,e4]
+    rowlist = [da.strip('\n'),day.strip('\n'),la.strip('\n'),e1,e2,e3,e4]
     with open(filename,'a',newline='') as csvfile:
         csvwriter=csv.writer(csvfile,delimiter=',')
         csvwriter.writerow(rowlist)
-        
 
 def latest_records():
     df = pd.read_csv('Hostel Expense Record.csv', delimiter=',')
     list_of_csv = [list(row) for row in df.values]
     
-    return list_of_csv
+    last_ten_elements_rev=list_of_csv[-10:]
+    last_ten_elements=last_ten_elements_rev[::-1]
+    
+    for i in range(0,10):
+        last_ten_elements[i][3]=round(last_ten_elements[i][6]/3 + last_ten_elements[i][3],2)
+        last_ten_elements[i][4]=round(last_ten_elements[i][6]/3 + last_ten_elements[i][4],2)
+        last_ten_elements[i][5]=round(last_ten_elements[i][6]/3 + last_ten_elements[i][5],2)
+    
+    return last_ten_elements 
 
 def Days() :
     
@@ -145,12 +177,15 @@ def Days() :
     timedelta = max_date - min_date
         
     return timedelta.days
-    
+
+
+##--------------------------------       Function Definition Ends      -------------------------------------#
+
+
 if option=="Home":
 
-    st.markdown("<h1 style='text-align: center; color: white;'>Expense Record</h1>", unsafe_allow_html=True)
-    st.header("Introduction : ")
-    st.markdown("<marquee>This project helps in identifying the daily expenses made by you and helps in maintaing the record for the same. Hello All.</marquee>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center; color: white;'>Expense Record Data Base</h1>", unsafe_allow_html=True)
+    st.markdown("<marquee>A one stop point to have a record and correctly monitor all your expenses !! </marquee>", unsafe_allow_html=True)
     c1,c2=st.columns((2,1))
     
     with c1:
@@ -168,7 +203,7 @@ if option=="Home":
         submit_entry=st.button("Submit")
         
         if submit_entry:
-            update(date_str,Expense,Amount_yash,Amount_devesh,Amount_kartikey,common)
+            update(date_str,day,Expense,Amount_yash,Amount_devesh,Amount_kartikey,common)
             st.write('Sucessfully Submitted')
 
     with c2:
@@ -196,80 +231,89 @@ if option=="Home":
 elif option=="Latest Records":                              ##-------------------------------------------------------------------------##
     
     st.markdown("<h1 style='text-align: center; color: white;'>Latest Entries</h1>", unsafe_allow_html=True)
-    #st.title('Last ten Records')
     choose = st.selectbox('Name : ',('Devesh','Kartikey','Yash'))
-    
-    list_of_csv=latest_records()
-    
-    last_ten_elements_rev=list_of_csv[-10:]
-    last_ten_elements=last_ten_elements_rev[::-1]
-    
-    for i in range(0,10):
-        last_ten_elements[i][2]=round(last_ten_elements[i][5]/3 + last_ten_elements[i][2],2)
-        last_ten_elements[i][3]=round(last_ten_elements[i][5]/3 + last_ten_elements[i][3],2)
-        last_ten_elements[i][4]=round(last_ten_elements[i][5]/3 + last_ten_elements[i][4],2)
         
-    column1,column2,column3=st.columns((1,1,1))
+    column1,column2,column3,column4=st.columns((1,1,1,1))
     
+    record = latest_records()
+
     with column1:
-            st.header('Date')
+        st.header('Date')
             
-            for i in range(0,10):
-                st.write(last_ten_elements[i][0])
+        for i in range(0,10):
+            st.write(record[i][0])
         
     with column2:
-            st.header('Particulars')
+        st.header('Day')
             
-            for i in range(0,10):
-                st.write(last_ten_elements[i][1])
-        
-    if choose=='Devesh':
-        
-        with column3:
-            st.header('Amount')
+        for i in range(0,10):
+            st.write(record[i][1])
+      
+    with column3:
+        st.header('Particulars')
             
-            for i in range(0,10):
-                st.write(str(last_ten_elements[i][3]),'/-')
+        for i in range(0,10):
+            st.write(record[i][2])
+        
+    with column4: 
+        st.header('Expense')
+            
+        for i in range(0,10):
+            if(choose == 'Devesh') :
+                st.write('Rs. ',str(record[i][4]))
                 
-    elif choose=='Kartikey':
-        
-        with column3:
-            st.header('Amount')
-            
-            for i in range(0,10):
-                st.write(str(last_ten_elements[i][4]),'/-')
+            elif(choose == 'Kartikey') :
+                st.write('Rs. ',str(record[i][5]))
                 
-    if choose=='Yash':
-        
-        with column3:
-            st.header('Amount')
+            elif(choose == 'Yash') :
+                st.write('Rs. ',str(record[i][3]))
             
-            for i in range(0,10):
-                st.write(str(last_ten_elements[i][2]),'/-')
         
 elif option=="Graphical Visualization":                            
     
-    st.markdown("<h1 style='text-align: center; color: white;'>Daily Expenditure</h1>", unsafe_allow_html=True)
-    choice=st.selectbox('Name : ',('Devesh','Kartikey','Yash'))
-    d_g,y_g,k_g = plotter()
+    n_choice=st.selectbox('Please Enter the Name : ',('Devesh','Kartikey','Yash'))
+    gr_choice=st.selectbox('Please select the way to visualize the expenses : ',('Last 7 days','Last 30 days','Monthwise Record'))
+    
+    d_g,y_g,k_g,dm_g,km_g,ym_g = plotter()
+    
     data_grph = [d_g,y_g,k_g]
+    data_month_graph=[dm_g,km_g,ym_g]
     
-    if choice=='Devesh':
-        graph_wiz(data_grph[0],'daily')
+    if gr_choice == 'Last 7 days' :
         
-    elif choice=='Kartikey':
-        graph_wiz(data_grph[2],'daily')
+        st.markdown("<h1 style='text-align: center; color: white;'>Expenditure : Last 7 Days</h1>", unsafe_allow_html=True)
         
-    elif choice=='Yash':
-        graph_wiz(data_grph[1],'daily')
+        if n_choice=='Devesh':
+            graph_wiz(data_grph[0],'daily-7')
         
-    st.markdown("<h1 style='text-align: center; color: white;'>Monthly Expenditure</h1>", unsafe_allow_html=True)
-    
-    if choice=='Devesh':
-        graph_wiz(data_grph[0],'month')
+        elif n_choice=='Kartikey':
+            graph_wiz(data_grph[2],'daily-7')
         
-    elif choice=='Kartikey':
-        graph_wiz(data_grph[2],'month')
+        elif n_choice=='Yash':
+            graph_wiz(data_grph[1],'daily-7')
         
-    elif choice=='Yash':
-        graph_wiz(data_grph[1],'month')
+    elif gr_choice == 'Last 30 days' :
+        
+        st.markdown("<h1 style='text-align: center; color: white;'>Expenditure : Last 30 Days</h1>", unsafe_allow_html=True)
+        
+        if n_choice=='Devesh':
+            graph_wiz(data_grph[0],'daily-30')
+        
+        elif n_choice=='Kartikey':
+            graph_wiz(data_grph[2],'daily-30')
+        
+        elif n_choice=='Yash':
+            graph_wiz(data_grph[1],'daily-30')
+            
+    elif gr_choice == 'Monthwise Record' :
+        
+        st.markdown("<h1 style='text-align: center; color: white;'>Expenditure : Monthwise Record</h1>", unsafe_allow_html=True)
+        
+        if n_choice=='Devesh':
+            graph_wiz(data_month_graph[0],'month')
+        
+        elif n_choice=='Kartikey':
+            graph_wiz(data_month_graph[2],'month')
+        
+        elif n_choice=='Yash':
+            graph_wiz(data_month_graph[1],'month')
