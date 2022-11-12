@@ -167,7 +167,8 @@ def latest_records():
 
 def Days() :
     
-    dates = latest_records()
+    df = pd.read_csv('Hostel Expense Record.csv', delimiter=',')
+    dates = [list(row) for row in df.values]
     date_str_min = dates[0][0]
     date_str_max = dates[-1][0]
 
