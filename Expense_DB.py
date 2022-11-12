@@ -169,6 +169,7 @@ def Days() :
     
     df = pd.read_csv('Hostel Expense Record.csv', delimiter=',')
     dates = [list(row) for row in df.values]
+ 
     date_str_min = dates[0][0]
     date_str_max = dates[-1][0]
 
@@ -216,18 +217,23 @@ if option=="Home":
         d,k,y=Overview()
         st.write(' ')
         
+        record = latest_records()
+        
         if choose=='Devesh' and Enter:
             st.write(f'Total Expense of Devesh : ₹ {round(sum(d),3)}'); 
             st.write(f'Last Spent Amount     : ₹ {round(d[len(d)-1],3)}'); 
             st.write(f'Average Daily Expense   : ₹ {round(sum(d)/Days(),3)}');
+            st.write(f'Last Expense Name : {record[0][2]}')
         elif choose=='Kartikey' and Enter:
             st.write(f'Total Expense of Kartikey : ₹ {round(sum(k),3)}'); 
             st.write(f'Last Spent Amount     : ₹ {round(k[len(k)-1],3)}'); 
             st.write(f'Average Daily Expense   : ₹ {round(sum(k)/Days(),3)}');
+            st.write(f'Last Expense Name : {record[0][2]}')
         elif choose=='Yash' and Enter:
             st.write(f'Total Expense of Yash : ₹ {round(sum(y),3)}'); 
             st.write(f'Last Spent Amount     : ₹ {round(y[len(y)-1],3)}'); 
             st.write(f'Average Daily Expense   : ₹ {round(sum(y)/Days(),3)}');
+            st.write(f'Last Expense Name : {record[0][2]}')
 
 elif option=="Latest Records":                              ##-------------------------------------------------------------------------##
     
