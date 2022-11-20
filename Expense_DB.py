@@ -237,17 +237,18 @@ if option=="Home":
             
         if Enter:
             
-            st.header("Overall Analysis Chart")
             d,k,y=Overview()
 
             labels = 'Devesh', 'Kartikey', 'Yash'
             sizes = [sum(d),sum(k),sum(y)]
 
             fig, ax1 = plt.subplots()
-            ax1.pie(sizes, labels=labels, autopct='%1.1f%%',
-            shadow=True, startangle=90)
-            ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-
+            fig.set_facecolor('#0e1117')
+            ax1.set_facecolor('#0e1117')
+            ax1.pie(sizes, autopct='%1.1f%%', wedgeprops={'linewidth': 3.0, 'edgecolor': '#0e1117'}, shadow=False, startangle=90)
+            ax1.axis('equal')  
+            plt.legend(labels, )
+            plt.title("Overall Analysis Chart", color = 'white', fontdict={'fontsize': 17})
             st.pyplot(fig)
 
 elif option=="Latest Records":                              ##-------------------------------------------------------------------------##
