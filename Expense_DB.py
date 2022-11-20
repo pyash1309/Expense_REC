@@ -234,6 +234,21 @@ if option=="Home":
             st.write(f'Last Spent Amount     : ₹ {round(y[len(y)-1],3)}'); 
             st.write(f'Average Daily Expense   : ₹ {round(sum(y)/Days(),3)}');
             st.write(f'Last Expense Name : {record[0][2]}')
+            
+        if Enter:
+            
+            st.header("Overall Analysis Chart")
+            d,k,y=Overview()
+
+            labels = 'Devesh', 'Kartikey', 'Yash'
+            sizes = [sum(d),sum(k),sum(y)]
+
+            fig, ax1 = plt.subplots()
+            ax1.pie(sizes, labels=labels, autopct='%1.1f%%',
+            shadow=True, startangle=90)
+            ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+
+            st.pyplot(fig)
 
 elif option=="Latest Records":                              ##-------------------------------------------------------------------------##
     
