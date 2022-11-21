@@ -6,12 +6,13 @@ from datetime import datetime, timedelta
 import datetime
 import csv
 from streamlit_option_menu import option_menu
+import base64
 
 st.set_page_config(layout="wide")
 
 with st.sidebar:
-    option = option_menu("Table of Contents", ["Home", "Latest Records","Graphical Visualization"],
-                         icons=['house','receipt-cutoff','graph-down'],
+    option = option_menu("Table of Contents", ["Home", "Latest Records","Graphical Visualization","Documentation"],
+                         icons=['house','receipt-cutoff','graph-down','file-text'],
                          menu_icon="menu-button-wide-fill", default_index=0, 
                          styles={
                             "container": {"padding": "5!important", "background-color": "#1a1a1a"},
@@ -105,13 +106,13 @@ def graph_wiz(x,grph_type) :
     
     if grph_type == 'daily-7' :
         
-        lst_val = lst_val[-8:-1]
-        lst_key = lst_key[-8:-1]
+        lst_val = lst_val[-7:]
+        lst_key = lst_key[-7:]
        
     elif grph_type == 'daily-30' :
         
-        lst_val = lst_val[-31:-1]
-        lst_key = lst_key[-31:-1]
+        lst_val = lst_val[-30:]
+        lst_key = lst_key[-30:]
         
     fig, ax = plt.subplots()
     fig.set_facecolor('#0e1117')
@@ -180,6 +181,12 @@ def Days() :
         
     return timedelta.days
 
+def display_pdf(pdf_file):
+    with open(pdf_file,'rb') as f:
+        base64_pdf=base64.b64encode(f.read()).decode('utf-8')
+    
+    pdf_display = F'<embed src="data:application/pdf;base64,{base64_pdf}" width="1000" height="800" type="application/pdf">'
+    st.markdown(pdf_display, unsafe_allow_html=True)
 
 ##--------------------------------       Function Definition Ends      -------------------------------------#
 
@@ -340,3 +347,8 @@ elif option=="Graphical Visualization":
         
         elif n_choice=='Yash':
             graph_wiz(data_month_graph[1],'month')
+        
+elif option=="Documentation":
+    
+    st.title('Documentation : ')
+    display_pdf("ADMM1.pdf")
