@@ -351,4 +351,4 @@ elif option=="Graphical Visualization":
 elif option=="Documentation":
     
     st.title('Documentation : ')
-    display_pdf("ADMM1.pdf")
+    display_pdf("20BEC023_20BEC137_SP_SPL_ASST.pdf")
